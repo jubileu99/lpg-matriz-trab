@@ -1,0 +1,15 @@
+0 ./prog
+1 transpo
+2 arq1.txt
+3 arq2.txt
+4
+5
+
+
+transposicao funcionando
+soma funcionando
+sub funcionando
+
+[0,0] = 20
+[1,0] = 31
+[2,0] = 4

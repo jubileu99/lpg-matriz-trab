@@ -76,19 +76,42 @@ float **sub(float **m1, float **m2, int l, int c){
     return m3;
 }
 /*
-    multiplacao : precisa-se checar a ordem antes, A[2x3]  B[3x2] , col de A = linha de B, a ordem da matriz resultante R[2x2] 
+    multiplacao : precisa-se checar a ordem antes, A[2x3]  B[3x2] , col de A = linha de B, a ordem da matriz resultante R[2x2]
+    K = Numero de colunas de A ou o numero de linhas de B 
 */
 
-float **multi(float **m1, float **m2, int l, int c){
+float **multi(float **m1, float **m2, int l, int c, int l_a){
     float **m3 = aloca(l, c);
 
     for(int i = 0; i < l; i++){
         for(int j = 0; i < c; j++){
-            for(int k = 0; k < l; k++){
-                m3[i][j] += m1[i][j+k]*m2[j+k][j];
+            m3[i][j] = 0;
+            for(int k = 0; k < l_a; k++){
+                m3[i][j] += m1[i][k]*m2[k][j];
             }
         }
     }
 
     return m3;
 }
+/*
+
+    Desenvolvida ..
+
+*/
+float **multiesc(float **m1, int l, int c, int n){
+   float **m3 = aloca(l, c);
+
+    for(int i = 0; i < l; i++){
+        for(int j = 0; i < c; j++){
+            m3[i][j] = m1[i][l]*n;
+        }
+    }
+
+    return m3;
+}
+/*
+
+    Desenvolvida ..
+
+*/
