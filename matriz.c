@@ -3,10 +3,10 @@
 #include "matriz.h"
 
 
-void mostra_matriz(float **m,int l,int c){
-    for (int i = 0; i < l; i++){
-        for (int j = 0; j < l; j++){
-            printf("[%d][%d] : %f\t", i, j,m[i][j]);
+void mostra_matriz(Matriz m1){
+    for (int i = 0; i < m1.l; i++){
+        for (int j = 0; j < m1.c; j++){
+            printf("[%d][%d] : %f\t", i, j,m1.m[i][j]);
         }
         printf("\n");
     }
@@ -21,39 +21,43 @@ float **aloca(int l,int c){
     return m3;
 }
 
-void desaloca(float **m,int l){
-    for(int i = 0; i < l; i++){ 
-        free(m[i]);
+void desaloca(Matriz *m1){
+    for(int i = 0; i < m1->l; i++){ 
+        free(m1->m[i]);
     }
-    free(m);
+    free(m1->m);
 }
 
 /*
     transposta : numero de l vira o de c, ordem altera, 3x2 vira 2x3, but se for quadrado nao altera.
 */
 
-float **transpo(float **m1,int l,int c){
-    float **m3 = aloca(c,l);
+Matriz transpo(Matriz *m1){
+    Matriz m2;
+    m2.c = m1->l;
+    m2.l = m1->c;
+    m2.m = aloca(m2.l, m2.c);
 
-    for(int i = 0; i < c; i++){
-        for(int j = 0; i < l; j++){
-            m3[i][j] = m1[j][i];
+    for(int i = 0; i < m2.l; i++){
+        for(int j = 0; i < m2.c; j++){
+            m2.m[i][j] = m1->m[j][i];
         }
     }
 
-    return m3;
+    return m2;
 }
 
 /*
     soma de matrizes = mesma ordem, so somar posi. com posi.
 */
 
-float **soma(float **m1,float **m2,int l,int c){
-    float **m3 = aloca(l,c);
+Matriz soma(Matriz *m1, Matriz *m2){
+    Matriz m3;
+    m3.m = aloca(m3.l,m3.c);
 
-    for(int i = 0; i < l; i++){
-        for(int j = 0; i < c; j++){
-            m3[i][j] = m1[i][j] + m2[i][j];
+    for(int i = 0; i < m1->l; i++){
+        for(int j = 0; i < m1->c; j++){
+            m3.m[i][j] = m1->m[i][j] + m2->m[i][j];
         }
     }
 
@@ -64,12 +68,13 @@ float **soma(float **m1,float **m2,int l,int c){
     subtracao de matrizes = mesma ordem, so sub posi. com posi.
 */
 
-float **sub(float **m1, float **m2, int l, int c){
-    float **m3 = aloca(l, c);
+Matriz sub(Matriz *m1, Matriz *m2){
+    Matriz m3;
+    m3.m = aloca(m1->l, m1->c);
 
-    for(int i = 0; i < l; i++){
-        for(int j = 0; i < c; j++){
-            m3[i][j] = m1[i][j] - m2[i][j];
+    for(int i = 0; i < m1->l; i++){
+        for(int j = 0; i < m1->c; j++){
+            m3.m[i][j] = m1->m[i][j] - m2->m[i][j];
         }
     }
 
@@ -80,14 +85,15 @@ float **sub(float **m1, float **m2, int l, int c){
     K = Numero de colunas de A ou o numero de linhas de B 
 */
 
-float **multi(float **m1, float **m2, int l, int c, int l_a){
-    float **m3 = aloca(l, c);
+Matriz multi(Matriz *m1,Matriz *m2){
+    Matriz m3;
+    m3.m = aloca(m1->l, m2->c);
 
-    for(int i = 0; i < l; i++){
-        for(int j = 0; i < c; j++){
-            m3[i][j] = 0;
-            for(int k = 0; k < l_a; k++){
-                m3[i][j] += m1[i][k]*m2[k][j];
+    for(int i = 0; i < m1->l; i++){
+        for(int j = 0; i < m2->c; j++){
+            m3.m[i][j] = 0;
+            for(int k = 0; k < m1->c; k++){
+                m3.m[i][j] += m1->m[i][k]*m2->m[k][j];
             }
         }
     }
@@ -96,15 +102,16 @@ float **multi(float **m1, float **m2, int l, int c, int l_a){
 }
 /*
 
-    Desenvolvida ..
+    Multiplicacao por escaalar 
 
 */
-float **multiesc(float **m1, int l, int c, int n){
-   float **m3 = aloca(l, c);
+Matriz multiesc(Matriz *m1, int n){
+    Matriz m3;
+    m3.m = aloca(m1->l, m1->c);
 
-    for(int i = 0; i < l; i++){
-        for(int j = 0; i < c; j++){
-            m3[i][j] = m1[i][l]*n;
+    for(int i = 0; i < m1->l; i++){
+        for(int j = 0; j < m1->c; j++){
+            m3.m[i][j] = m1->m[i][j]*n;
         }
     }
 
@@ -112,6 +119,47 @@ float **multiesc(float **m1, int l, int c, int n){
 }
 /*
 
-    Desenvolvida ..
+    Matrizes iguais
+
+    0 = nao iguais
+    1 = iguais
+    -1 = erro de ordem
 
 */
+int iguais(Matriz *m1,Matriz *m2){
+
+    if(m1->c != m2->c || m1->l != m2->l){
+        return -1;
+    }
+
+    int cont = 0,total = m1->l*m1->c;
+
+    for(int i = 0; i < m1->l; i++){
+        for(int j = 0; j < m1->c; j++){
+            if(m1->m[i][j] == m2->m[i][j]){
+                cont++;
+            }
+        }
+    }
+    if(cont == total)
+        return 1;
+    else
+        return 0;
+}
+/*
+
+    Matriz simetrica, faz a transposta e verifica se a transposta é igual a original.
+
+    1 = simetrica
+    0 = nao é simetrica
+
+*/
+
+int simetrica(Matriz *m1){
+    Matriz m2 = transpo(m1);
+
+    if(iguais(m1,&m2))
+        return 1;
+    else
+        return 0;
+}

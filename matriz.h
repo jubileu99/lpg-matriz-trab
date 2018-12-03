@@ -1,13 +1,16 @@
 typedef struct{
     float **m;
-    int l,c
+    int l,c;
+    int status;
 }Matriz;
 
-void mostra_matriz(float **m,int l,int c);
-float **transpo(float **m1,int l,int c);
-float **soma(float **m1,float **m2,int l,int c);
-float **sub(float **m1, float **m2, int l, int c);
-float **multi(float **m1, float **m2, int l, int c, int l_a);
-float **multiesc(float **m1,int l,int c,int n);
-float **iguais(float **m1, float **m2, int l, int c);
-float **simetrica(float **m1, int l, int c);
+float **aloca(int l,int c);
+void desaloca(Matriz *m1);
+void mostra_matriz(Matriz m1);
+Matriz transpo(Matriz *m1);
+Matriz soma(Matriz *m1,Matriz *m2);
+Matriz sub(Matriz *m1, Matriz *m2);
+Matriz multi(Matriz *m1, Matriz *m2);
+Matriz multiesc(Matriz *m1, int n);
+int iguais(Matriz *m1,Matriz *m2);
+int simetrica(Matriz *m1);
