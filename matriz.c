@@ -39,7 +39,7 @@ Matriz transpo(Matriz *m1){
     m2.m = aloca(m2.l, m2.c);
 
     for(int i = 0; i < m2.l; i++){
-        for(int j = 0; i < m2.c; j++){
+        for(int j = 0; j < m2.c; j++){
             m2.m[i][j] = m1->m[j][i];
         }
     }
